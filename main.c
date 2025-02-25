@@ -198,11 +198,11 @@ void loop(){
             P1OUT = 170;
             __delay_cycles(1050000);
             P1OUT = 85;
-            __delay_cycles(1050000);
+            __delay_cycles(1050000); // one sec
             break;
         case 2 :
             P1OUT = patt2count;
-            __delay_cycles(525000);
+            __delay_cycles(525000); // 0.5 sec
             patt2count++;
             break;
         case 3 :
@@ -210,7 +210,7 @@ void loop(){
             break;
         case 4 : 
             P1OUT = patt4count;
-            __delay_cycles(262500);
+            __delay_cycles(262500); // 0.25 sec
             patt4count--;
             if (patt4count == 0){
                 patt4count = 255;
