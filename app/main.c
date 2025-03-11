@@ -338,8 +338,12 @@ void selectPattern(void)
             // C affects cursor state
             // every number affects pattern
 
-            if (key <= 0 && key <= 7) // changes LED pattern
+
+            
+            if (key >= 0 && key <= 7) // changes LED pattern
             {
+                setup();
+                loop(key);
                 // go to loop
                 // setup();
                 // loop(ledPatt)
@@ -351,7 +355,7 @@ void selectPattern(void)
             else if (key == 12 || key == 9)     // changes cursor state
             {
                 // go to cursor state
-            }
+            } 
 
             done = false;   // reset
             r = 10;         // reset

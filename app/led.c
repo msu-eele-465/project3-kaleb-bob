@@ -193,8 +193,11 @@ void case7patt(){
 
 
 void loop(int pattern){
-    int i;
-    int patt;
+    int k;
+    for(k = 0; k < 10; k++)
+    {
+        int i;
+        int patt;
         patt = pattern;
         if (patt == 10 || patt == 11)
         {
@@ -247,6 +250,9 @@ void loop(int pattern){
                     break;
             }
         }
+    }
+
+    
         
     return;
 
