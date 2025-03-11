@@ -59,7 +59,7 @@ int findRow(void)
             row = 5;
             break;
         case 15:
-            row = 10;     // out of range!!
+            row = 10;     // no buttons pushed
 
     }
     return row;
@@ -165,43 +165,34 @@ int main(void){
     //    || 4, P3.3, P3.6, 4, 7 | 5, P3.2, P3.6, 3, 7 | 6, P3.1, P3.6, 2, 7 | B, P3.0, P3.6, 1, 7 ||
     //    || 7, P3.3, P3.5, 4, 6 | 8, P3.2, P3.5, 3, 6 | 9, P3.1, P3.5, 2, 6 | C, P3.0, P3.5, 1, 6 ||
     //    || *, P3.3, P3.4, 4, 5 | 0, P3.2, P3.4, 3, 5 | #, P3.1, P3.4, 2, 5 | D, P3.0, P3.4, 1, 5 || 
-
-
-   /* while(true)
-    {
-    } */
-
-
-    // set up P6.6 (LED) as output
-   // P6DIR |= BIT6;
-   // P6OUT &= ~BIT6;
-
-    // Set up P1.0 (LED) as output
-   // P1DIR |= BIT0;
-   // P1OUT &= ~BIT0;
-
    unlock();
 }
 
+// han shot first
+
+
 void unlock(void)
 {
-
-    RGB(0);
-
     int r;
     int c;
-    r = 10;
-
     int i;
+    int code;
+    bool done;
+
+    // password arrays
+    int rCode[] = {8,7,5,7}; // row value of key
+    int cCode[] = {2,3,2,1}; // col value of key
+
+    done = false;
+    code = 0;
+    r = 10;
     i = 0;
 
-    bool done;
-    done = false;
-    int code;
-    code = 0;
+    RGB(0); // locked
 
     while(i < 4)
     {
+        // start of reading key input ----------------------
         while(r == 10)
         {
             r = findRow();
@@ -213,150 +204,159 @@ void unlock(void)
         {
             done = keyReleased();
         }
-        RGB(1);
+        // end of reading key input ------------------------
 
+        RGB(1); // unlocking color
 
-        switch(i)
+        if(r == rCode[i] && c == cCode[i]) // comparing key to password
         {
-            case 0:
-                if (r == 8)
-                {
-                    if (c == 2)
-                    {
-                        code++;
-                    }
-                }
-            case 1:
-                if (r == 7)
-                {
-                    if (c == 3)
-                    {
-                        code++;
-                    }
-                }
-            case 2:
-                if (r == 5)
-                {
-                    if (c == 2)
-                    {
-                        code++;
-                    }
-                }
-            case 3:
-                if (r == 7)
-                {
-                    if (c == 1)
-                    {
-                        code++;
-                    }
-                }
+            code++;
         }
 
-        done = false;
-        r = 10;
-        i++;
+        done = false; // reset for keyReleased function
+        r = 10;       // reset for reading row of keypad
+        i++;          // increment counter
     }
 
 
-    if (code == 4) // unlocked
+    // four keys have been pushed ----------------------------------
+
+    if (code == 4)       // unlocked
     {
-        RGB(2);
-        selectPattern();
+        RGB(2);            // unlocked color on RGB
+        selectPattern();   // select pattern based on keypad input
     }
     else {          // locked
-        RGB(0);
-        unlock();
+        unlock();   // repeat function
     }
 }
 
 void selectPattern(void)
 {
-        bool done;
-        done = false;
-
         int r;
         int c;
+        int prevR;
+        int prevC;
+        bool done;
+        int key;
+        int prevKey;
+
+        done = false;
         r = 10;
 
-        int ledPatt;
-        int prevPatt;
-
-        while(true)
+        while(true) // since device in UNLOCKED, this will always read the input from the keypad and select a pattern
         {
-            while(r == 10)
+            // if button is pushed, findRow() will return 5-8
+            // if button is not pushed, findRow() will return 10
+            r = findRow();
+            if (r == 10) // button NOT pushed
             {
-                r = findRow();
+                r = prevR;
+                c = prevC;
+            }
+            else        // button is pushed
+            {
+                c = findCol();
+                while (done != true) // need to wait for button to be released
+                {
+                    done = keyReleased();
+                }
             }
 
-            c = findCol();
-
-            while(done != true)
-            {
-                done = keyReleased();
-            }
-
+            // start of determining what key was pushed
             switch(r)
             {
                 case 8:
                     switch(c)
                     {
                         case 1:
+                            key = 10; // A
                         case 2:
-                            ledPatt = 3;
+                            key = 3;
                             break;
                         case 3:
-                            ledPatt = 2;
+                            key = 2;
                             break;
                         case 4:
-                            ledPatt = 1;
+                            key = 1;
                             break;
+                        default:
+                            key = 100;
                     }
                     break;
                 case 7:
                     switch(c)
                     {
                         case 1:
+                            key = 11; // B
                         case 2:
-                            ledPatt = 6;
+                            key = 6;
                             break;
                         case 3:
-                            ledPatt = 5;
+                            key = 5;
                             break;
                         case 4:
-                            ledPatt = 4;
+                            key = 4;
                             break;
+                        default:    
+                            key = 100;
                     }
                     break;
                 case 6:
                     switch(c)
                     {
                         case 1:
+                            key = 12; // C
+                            break;      
                         case 2:
-                            ledPatt = 9;
+                            key = 9;
                             break;
                         case 3:
-                            ledPatt = 8;
+                            key = 8;
                             break;
                         case 4:
-                            ledPatt = 7;
+                            key = 7;
                             break;
+                        default:
+                            key = 100;
                     }
                     break;
                 case 5:
                     switch(c)
                     {
-                        case 1:
-                        case 2:
                         case 3:
-                        case 4:
+                            key = 0;
+                            break;
+                        default:
+                            key = 100;
                     }
                     break;
             }
+            // end of determining what key was pushed
 
-            setup();
-            loop(ledPatt);
-            done = false;
-            r = 10;
+            // A, B affect base rate
+            // C affects cursor state
+            // every number affects pattern
+
+            if (key <= 0 && key <= 7) // changes LED pattern
+            {
+                // go to loop
+                // setup();
+                // loop(ledPatt)
+            }
+            else if (key == 10 || key == 11)    // changes LED pattern base rate
+            {
+                // go to base rate
+            }
+            else if (key == 12 || key == 9)     // changes cursor state
+            {
+                // go to cursor state
+            }
+
+            done = false;   // reset
+            r = 10;         // reset
+            prevR = r;
+            prevC = c;
 
         }
 }
@@ -447,7 +447,7 @@ __interrupt void ISR_TB0_CCR2(void)
     TB0CCTL2 &= ~CCIFG;
 }
 
-#pragma vetor = TIMER1_B0_VECTOR // pulls red low
+#pragma vector = TIMER1_B0_VECTOR // pulls red low
 __interrupt void ISR_TB1_CCR0(void)
 {
     P6OUT &= ~BIT0; // red

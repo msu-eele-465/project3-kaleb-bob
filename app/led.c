@@ -1,6 +1,7 @@
 
 #include "intrinsics.h"
 #include <msp430fr2355.h>
+#include <stdbool.h>
 
 // declarations
 int patt2count =0;
@@ -58,7 +59,7 @@ void case3patt(){
                     break;
 
     }
-    _delay_cycles(525000); //0.25
+    _delay_cycles(525000); // 0.25
     patt3step++;
     if (patt3step > 5){
         patt3step = 0;
@@ -193,71 +194,60 @@ void case7patt(){
 
 void loop(int pattern){
     int i;
-    for (i = 0; i < 10; i++)
-    {
-        switch(pattern)
+    int patt;
+        patt = pattern;
+        if (patt == 10 || patt == 11)
         {
-            case 0 :
-                P1OUT = 170;
-                break;
-            case 1 :
-                P1OUT = 170;
-                __delay_cycles(1050000);
-                P1OUT = 85;
-                __delay_cycles(1050000); // one sec
-                break;
-            case 2 :
-                P1OUT = patt2count;
-                __delay_cycles(525000); // 0.5 sec
-                patt2count++;
-                break;
-            case 3 :
-                case3patt();
-                break;
-            case 4 : 
-                P1OUT = patt4count;
-                __delay_cycles(262500); // 0.25 sec
-                patt4count--;
-                if (patt4count == 0){
-                    patt4count = 255;
-                }
-                break;
-            case 5 :
-                case5patt();
-                break;
-            case 6 :
-                case6patt();
-                break;
-            case 7 :
-                case7patt();
-                break;
-            default:
-                P1OUT = 0xFF;
-                break;
+            // change base rate
         }
-    }
+        else if (patt == 12)
+        {
+            // cursor
+        }
+        else
+        {
+            switch(patt)
+            {
+                case 0 :                // display "10101010"
+                    P1OUT = 170;
+                    break;
+                case 1 :                // display "10101010", wait one second, display "01010101"
+                    P1OUT = 170;
+                    __delay_cycles(1050000);
+                    P1OUT = 85;
+                    __delay_cycles(1050000); // one sec
+                    break;
+                case 2 :
+                    P1OUT = patt2count;
+                    __delay_cycles(525000); // 0.5 sec
+                    patt2count++;
+                    break;
+                case 3 :
+                    case3patt();
+                    break;
+                case 4 : 
+                    P1OUT = patt4count;
+                    __delay_cycles(262500); // 0.25 sec
+                    patt4count--;
+                    if (patt4count == 0){
+                        patt4count = 255;
+                    }
+                    break;
+                case 5 :
+                    case5patt();
+                    break;
+                case 6 :
+                    case6patt();
+                    break;
+                case 7 :
+                    case7patt();
+                    break;
+                default:
+                    P1OUT = 0xFF;
+                    break;
+            }
+        }
+        
     return;
 
 }
-
-
-/*
-int led(int patt) {
-    WDTCTL = WDTPW | WDTHOLD;
-    setup();
-
-// ports
-    
-    PM5CTL0 &= ~LOCKLPM5; //gpio
-
-    int i=0;
-
-    while(1)
-    {
-        loop();
-    }
-
-
-    
-return 0;    
-} */
